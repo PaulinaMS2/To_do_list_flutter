@@ -32,7 +32,7 @@ class _CreateTareaPageState extends State<CreateTareaPage> {
     alignment: Alignment.center,
     child: Container(
       width: 400,
-      height: 400,
+      height: 300,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
@@ -52,7 +52,7 @@ class _CreateTareaPageState extends State<CreateTareaPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("Nueva tarea", style: const TextStyle(color: Colors.black, fontSize: 30)),
+              Text("Nueva tarea", style: const TextStyle(color: Colors.black, fontSize: 25)),
               TextFormField(
                 onChanged: (newValue) => nombre = newValue,
                 validator: validatorNombre,
@@ -68,20 +68,35 @@ class _CreateTareaPageState extends State<CreateTareaPage> {
                   hintText: "Ingrese una descripción de la tarea",
                 ),
               ),
-              TextButton(
-                onPressed: () {
-                  saveTarea(
-                    _key,
-                    nombre: nombre,
-                    descripcion: descripcion,
-                    provider: tareaProvider,
-                  );
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ListTareasPage()),
-                  );
-                },
-                child: Text("Guardar tarea", style: const TextStyle(color: Colors.teal, fontSize: 20)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ListTareasPage()),
+                      );
+                    },
+                    child: Text("Cancelar", style: const TextStyle(color: Colors.red, fontSize: 20)),
+                  ),
+                  SizedBox(width: 10), // Add some spacing between the buttons
+                  TextButton(
+                    onPressed: () {
+                      saveTarea(
+                        _key,
+                        nombre: nombre,
+                        descripcion: descripcion,
+                        provider: tareaProvider,
+                      );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ListTareasPage()),
+                      );
+                    },
+                    child: Text("Guardar tarea", style: const TextStyle(color: Colors.teal, fontSize: 20)),
+                  ), // Add some spacing between the buttons
+                ],
               ),
             ],
           ),

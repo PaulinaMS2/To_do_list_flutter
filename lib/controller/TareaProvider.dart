@@ -10,4 +10,17 @@ class TareaProvider extends ChangeNotifier {
     _tareas.add(tarea);
     notifyListeners();
   }
+
+  tareaCompletada(Tarea tarea, bool completada) {
+    tarea.completada = completada;
+    notifyListeners();
+  }
+
+  deleteTarea(Tarea tarea) {
+    _tareas.remove(tarea);
+    notifyListeners();
+  }
+
+
+
 }

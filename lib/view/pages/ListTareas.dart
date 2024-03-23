@@ -32,8 +32,19 @@ class ListTareasPage extends StatelessWidget {
       itemBuilder: (context, index) {
         Tarea tarea = tareas[index];
         return ListTile(
-          title: Text(tarea.nombre),
-          subtitle: Text(tarea.descripcion),
+           leading: Checkbox(
+                  activeColor: Colors.teal.shade100, // Cambia el color aquí
+                  value: tarea.completada,
+                  onChanged: (bool? value) {
+                    tareaProvider.tareaCompletada(tarea, value!);
+                  },
+                ),
+          title: Text(tarea.nombre, style: const TextStyle(color: Colors.black, fontSize: 20)),
+          trailing: IconButton(
+            icon: Icon(Icons.visibility, color: Colors.black, size: 25),
+            tooltip: "Ver tarea",
+            onPressed: () => showTaskDetails(context, tarea, tareaProvider),
+          ),
         );
       },
     );
@@ -46,4 +57,48 @@ class ListTareasPage extends StatelessWidget {
       ),
     );
   }
+}
+
+void showTaskDetails(BuildContext context, Tarea tarea, TareaProvider tareaProvider) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text(tarea.nombre, style: const TextStyle(color: Colors.black, fontSize: 25)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              tarea.descripcion,
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 16),
+            Row(
+              children: [
+                IconButton(
+                  icon: Icon(Icons.edit, color: Colors.lightBlue,),
+                  onPressed: () {
+                    // TODO: Implement edit functionality
+                  },
+                  tooltip: 'Editar',
+                ),
+                IconButton(
+                  icon: Icon(Icons.delete, color: Colors.red,),
+                  onPressed: () {
+                    tareaProvider.deleteTarea(tarea);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ListTareasPage()),
+                      );
+                  },
+                  tooltip: 'Eliminar',
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    },
+  );
 }
