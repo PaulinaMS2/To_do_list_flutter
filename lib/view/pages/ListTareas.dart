@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:to_do_flutter/controller/TareaProvider.dart';
 import 'package:to_do_flutter/model/Tarea.dart';
+import 'package:to_do_flutter/view/pages/EditTareaPage.dart';
 import 'package:to_do_flutter/view/pages/widgets/appBarList.dart  ';
 import 'package:to_do_flutter/view/pages/createTareaPage.dart';
 
@@ -75,24 +76,33 @@ void showTaskDetails(BuildContext context, Tarea tarea, TareaProvider tareaProvi
             ),
             SizedBox(height: 16),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center, // Centra los elementos horizontalmente
               children: [
-                IconButton(
-                  icon: Icon(Icons.edit, color: Colors.lightBlue,),
-                  onPressed: () {
-                    // TODO: Implement edit functionality
-                  },
-                  tooltip: 'Editar',
+                Center(
+                  child: IconButton(
+                    icon: Icon(Icons.edit, color: Colors.lightBlue,),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                        builder: (context) => EditTareaPage(tarea: tarea),
+                      ),
+                      );
+                    },
+                    tooltip: 'Editar',
+                  ),
                 ),
-                IconButton(
-                  icon: Icon(Icons.delete, color: Colors.red,),
-                  onPressed: () {
-                    tareaProvider.deleteTarea(tarea);
-                    Navigator.push(
+                Center(
+                  child: IconButton(
+                    icon: Icon(Icons.delete, color: Colors.red,),
+                    onPressed: () {
+                      tareaProvider.deleteTarea(tarea);
+                      Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => ListTareasPage()),
                       );
-                  },
-                  tooltip: 'Eliminar',
+                    },
+                    tooltip: 'Eliminar',
+                  ),
                 ),
               ],
             ),

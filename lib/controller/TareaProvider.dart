@@ -21,6 +21,17 @@ class TareaProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  
+  updateTarea(Tarea tarea,
+      {required String nombre,
+      required String descripcion}) {
+    int index = _tareas.indexOf(tarea);
+    if (index != -1) {
+      _tareas[index].nombre = nombre;
+      _tareas[index].descripcion = descripcion;
 
+      notifyListeners();
+    }
+  }
 
 }
