@@ -21,7 +21,6 @@ class TareaProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  
   updateTarea(Tarea tarea,
       {required String nombre,
       required String descripcion}) {
@@ -32,6 +31,13 @@ class TareaProvider extends ChangeNotifier {
 
       notifyListeners();
     }
+  }
+  List<Tarea> obtenerTareasCompletas() {
+    return _tareas.where((tarea) => tarea.completada).toList();
+  }
+
+  List<Tarea> obtenerTareasIncompletas() {
+    return _tareas.where((tarea) => !tarea.completada).toList();
   }
 
 }
