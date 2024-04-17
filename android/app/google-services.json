@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "517992386583",
+    "project_id": "movil-todo",
+    "storage_bucket": "movil-todo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:517992386583:android:4e68b688ce8a2e6ab58c52",
+        "android_client_info": {
+          "package_name": "com.example.to_do_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDW2FKbaK6a5c_kk7ITZOWG-u721ov8qHY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
