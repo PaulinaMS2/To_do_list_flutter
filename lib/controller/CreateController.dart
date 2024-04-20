@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:to_do_flutter/controller/TareaProvider.dart';
+import 'package:to_do_flutter/controller/TareaController.dart';
 import 'package:to_do_flutter/model/Tarea.dart';
 import 'package:to_do_flutter/view/pages/ListTareas.dart';
 
@@ -20,15 +19,14 @@ String? validatorDescripcion(String? descripcion) {
 }
 
 saveTarea(GlobalKey<FormState> _key,
-    {required String? nombre, required String? descripcion, required TareaProvider provider}) {
-  // Lógica
+    {required String? nombre, required String? descripcion}) {
   if (_key.currentState!.validate()) {
     _key.currentState!.save();
     if (nombre != null && descripcion != null) {
-      print(nombre);
-      Tarea tarea = Tarea( nombre, descripcion, false);
-      provider.addTarea(tarea);
-
+      Tarea tarea = Tarea(nombre: nombre, descripcion: descripcion, completada: false);
+      TareaController tareaController = TareaController();
+      tareaController.createTarea(tarea);
+      
     }
   }
 }

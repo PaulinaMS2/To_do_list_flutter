@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:to_do_flutter/controller/TareaProvider.dart';
+import 'package:to_do_flutter/controller/TareaController.dart';
 import 'package:to_do_flutter/controller/createController.dart';
 import 'package:to_do_flutter/view/pages/widgets/appBarList.dart';
 import 'package:to_do_flutter/view/pages/ListTareas.dart';
@@ -22,6 +22,8 @@ class _EditTareaPageState extends State<EditTareaPage> {
   late String nombre;
   late String descripcion;
 
+  TareaController tareaController = TareaController();
+
   @override
   void initState() {
     super.initState();
@@ -34,13 +36,11 @@ class _EditTareaPageState extends State<EditTareaPage> {
     return Scaffold(
       
       appBar: appBarList('Editar'),
-      body: Consumer<TareaProvider>(
-        builder: (context, tareaProvider, child) => editTareaForm(context, tareaProvider),
-      ),
+      body: editTareaForm(tareaController)
     );
   }
 
-  Widget editTareaForm(BuildContext context, TareaProvider tareaProvider) {
+  Widget editTareaForm(TareaController tareaController) {
   return Container(
     alignment: Alignment.center,
     child: Container(
@@ -98,7 +98,7 @@ class _EditTareaPageState extends State<EditTareaPage> {
                     onPressed: () {
                       if (_key.currentState!.validate()) {
                         _key.currentState!.save();
-                        tareaProvider.updateTarea(widget.tarea,
+                        tareaController.updateTarea(widget.tarea.id!,
                         nombre: nombre, descripcion: descripcion);
                         Navigator.pop(context);
                 };

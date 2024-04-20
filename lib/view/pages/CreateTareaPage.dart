@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:to_do_flutter/controller/TareaProvider.dart';
+import 'package:to_do_flutter/controller/TareaController.dart';
 import 'package:to_do_flutter/controller/createController.dart';
 import 'package:to_do_flutter/view/pages/widgets/appBarList.dart';
 import 'package:to_do_flutter/view/pages/ListTareas.dart';
 
+
 class CreateTareaPage extends StatefulWidget {
+  const CreateTareaPage({super.key});
   @override
   State<CreateTareaPage> createState() => _CreateTareaPageState();
 }
@@ -21,13 +23,11 @@ class _CreateTareaPageState extends State<CreateTareaPage> {
     return Scaffold(
       
       appBar: appBarList('Crear'),
-      body: Consumer<TareaProvider>(
-        builder: (context, tareaProvider, child) => tareaForm(context,tareaProvider),
-      ),
+      body: tareaForm(),
     );
   }
 
-  Widget tareaForm(BuildContext context, TareaProvider tareaProvider) {
+  Widget tareaForm() {
   return Container(
     alignment: Alignment.center,
     child: Container(
@@ -83,12 +83,12 @@ class _CreateTareaPageState extends State<CreateTareaPage> {
                   SizedBox(width: 10), // Add some spacing between the buttons
                   TextButton(
                     onPressed: () {
-                      saveTarea(
-                        _key,
-                        nombre: nombre,
-                        descripcion: descripcion,
-                        provider: tareaProvider,
-                      );
+                      if (_key.currentState!.validate()) {
+                          saveTarea(_key,
+                          nombre: nombre,
+                          descripcion: descripcion,                         
+                          );
+                        }
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => ListTareasPage()),

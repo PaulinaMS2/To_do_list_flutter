@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:to_do_flutter/controller/TareaProvider.dart';
+import 'package:to_do_flutter/controller/TareaController.dart';
 import 'package:to_do_flutter/model/Tarea.dart';
 import 'package:to_do_flutter/view/pages/EditTareaPage.dart';
 import 'package:to_do_flutter/view/pages/widgets/appBarList.dart  ';
@@ -14,6 +14,19 @@ class ListTareasPage extends StatefulWidget {
 class _ListTareasPageState extends State<ListTareasPage> {
   String title = "Listado de tareas";
   String _filter = "all";
+  List<Tarea> tareas = [];
+  TareaController tareaController = TareaController();
+
+  @override
+  void initState() {
+    super.initState();
+    loadTareas();
+  }
+
+  void loadTareas() async {
+    tareas = await tareaController.getTareas();
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,13 +86,7 @@ class _ListTareasPageState extends State<ListTareasPage> {
             ),
           ],
         ),
-        Expanded(
-          child: Consumer<TareaProvider>(
-            builder: (context, tareaProvider, child) {
-              return listTareas(tareaProvider);
-            },
-          ),
-        ),
+  
       ],
     ),
     floatingActionButton: FloatingActionButton(
@@ -90,38 +97,39 @@ class _ListTareasPageState extends State<ListTareasPage> {
   );
 }
 
-  ListView listTareas(TareaProvider tareaProvider) {
-  List<Tarea> tareas;
-  if (_filter == "all") {
-    tareas = tareaProvider.tareas;
-  } else if (_filter == "completed") {
-    tareas = tareaProvider.obtenerTareasCompletas();
-  } else {
-    tareas = tareaProvider.obtenerTareasIncompletas();
-  }
+  ListView listTareas() {
+    List<Tarea> filteredTareas;
+    if (_filter == "all") {
+      filteredTareas = tareas;
+    } else if (_filter == "completed") {
+      filteredTareas = tareas.where((tarea) => tarea.completada).toList();
+    } else {
+      filteredTareas = tareas.where((tarea) => !tarea.completada).toList();
+    }
 
   return ListView.builder(
-    itemCount: tareas.length,
-    itemBuilder: (context, index) {
-      Tarea tarea = tareas[index];
-      return ListTile(
-        leading: Checkbox(
-          activeColor: Colors.teal.shade500, // Cambia el color aquí
-          value: tarea.completada,
-          onChanged: (bool? value) {
-            tareaProvider.tareaCompletada(tarea, value!);
-          },
-        ),
-        title: Text(tarea.nombre, style: const TextStyle(color: Colors.black, fontSize: 20)),
-        trailing: IconButton(
-          icon: Icon(Icons.visibility, color: Colors.black, size: 25),
-          tooltip: "Ver tarea",
-          onPressed: () => showTaskDetails(context, tarea, tareaProvider),
-        ),
-      );
-    },
-  );
-}
+      itemCount: filteredTareas.length,
+      itemBuilder: (context, index) {
+        Tarea tarea = filteredTareas[index];
+        return ListTile(
+          leading: Checkbox(
+            activeColor: Colors.teal.shade500, // Cambia el color aquí
+            value: tarea.completada,
+            onChanged: (bool? value) {
+              tareaController.tareaCompletada(tarea.id! , value!);
+              loadTareas();
+            },
+          ),
+          title: Text(tarea.nombre, style: const TextStyle(color: Colors.black, fontSize: 20)),
+          trailing: IconButton(
+            icon: Icon(Icons.visibility, color: Colors.black, size: 25),
+            tooltip: "Ver tarea",
+            onPressed: () => showTaskDetails(context, tarea),
+          ),
+        );
+      },
+    );
+  }
 
   loadCreateTareaPage(BuildContext context) {
     Navigator.of(context).push(
@@ -130,57 +138,57 @@ class _ListTareasPageState extends State<ListTareasPage> {
       ),
     );
   }
+  void showTaskDetails(BuildContext context, Tarea tarea) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(tarea.nombre, style: const TextStyle(color: Colors.black, fontSize: 25)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                tarea.descripcion,
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center, // Centra los elementos horizontalmente
+                children: [
+                  Center(
+                    child: IconButton(
+                      icon: Icon(Icons.edit, color: Colors.lightBlue,),
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                          builder: (context) => EditTareaPage(tarea: tarea),
+                        ),
+                        );
+                      },
+                      tooltip: 'Editar',
+                    ),
+                  ),
+                  Center(
+                    child: IconButton(
+                      icon: Icon(Icons.delete, color: Colors.red,),
+                      onPressed: () {
+                        tareaController.deleteTarea(tarea.id!);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ListTareasPage()),
+                        );
+                      },
+                      tooltip: 'Eliminar',
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }
 
-void showTaskDetails(BuildContext context, Tarea tarea, TareaProvider tareaProvider) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text(tarea.nombre, style: const TextStyle(color: Colors.black, fontSize: 25)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              tarea.descripcion,
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center, // Centra los elementos horizontalmente
-              children: [
-                Center(
-                  child: IconButton(
-                    icon: Icon(Icons.edit, color: Colors.lightBlue,),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                        builder: (context) => EditTareaPage(tarea: tarea),
-                      ),
-                      );
-                    },
-                    tooltip: 'Editar',
-                  ),
-                ),
-                Center(
-                  child: IconButton(
-                    icon: Icon(Icons.delete, color: Colors.red,),
-                    onPressed: () {
-                      tareaProvider.deleteTarea(tarea);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ListTareasPage()),
-                      );
-                    },
-                    tooltip: 'Eliminar',
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
